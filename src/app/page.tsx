@@ -1,7 +1,7 @@
 import { Header } from "@/components/layout/Header";
 
 import Link from "next/link";
-import Image from "next/image";
+
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -59,12 +59,10 @@ export default function Home() {
 
                             {/* Right Column: Image */}
                             <div className="relative h-[400px] md:h-[600px] w-full rounded-3xl overflow-hidden bg-secondary/20">
-                                <Image
+                                <img
                                     src="/header-image.jpg"
                                     alt="Momento de calma e introspección"
-                                    fill
-                                    className="object-cover object-center opacity-90 hover:opacity-100 transition-opacity duration-700"
-                                    priority
+                                    className="absolute inset-0 w-full h-full object-cover object-center opacity-90 hover:opacity-100 transition-opacity duration-700"
                                 />
                             </div>
                         </div>
@@ -356,12 +354,10 @@ export default function Home() {
                                         {/* Grounding Shadow */}
                                         <div className="absolute bottom-2 left-6 right-6 h-6 bg-black/10 blur-xl rounded-[100%] translate-y-2 -z-10"></div>
 
-                                        <Image
+                                        <img
                                             src="/Mockup Celular2.webp"
                                             alt="Vista previa del diagnóstico en móvil mostrando preguntas claras y diseño amigable"
-                                            fill
-                                            className="object-contain drop-shadow-xl"
-                                            priority
+                                            className="absolute inset-0 w-full h-full object-contain drop-shadow-xl"
                                         />
                                     </div>
 

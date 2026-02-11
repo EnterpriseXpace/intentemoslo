@@ -1,5 +1,5 @@
 import Link from "next/link"
-import Image from "next/image"
+
 import { Logo } from "@/components/ui/Logo"
 import { Container } from "@/components/layout/Container"
 
