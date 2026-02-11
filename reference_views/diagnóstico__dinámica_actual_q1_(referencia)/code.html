@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Diagnóstico: Dinámica Actual - Intentémoslo de Nuevo</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Inter:wght@400;500;600&amp;family=Material+Icons+Outlined&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#A3E635", // Lime green from the prompt description
+              "background-light": "#FAFAFA",
+              "background-dark": "#121212",
+            },
+            fontFamily: {
+              serif: ["Instrument Serif", "serif"],
+              sans: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "12px",
+            },
+          },
+        },
+      };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .serif-text {
+            font-family: 'Instrument Serif', serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+<header class="w-full h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-zinc-900 flex items-center px-6 relative">
+<div class="flex-1 flex items-center">
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center">
+<span class="material-icons-outlined text-slate-600 dark:text-slate-400">arrow_back</span>
+</button>
+</div>
+<div class="flex-1 flex justify-center">
+<h1 class="font-serif italic text-2xl tracking-tight text-slate-800 dark:text-slate-100">intentémoslo</h1>
+</div>
+<div class="flex-1 flex justify-end">
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400">1 / 15</span>
+</div>
+</header>
+<div class="w-full h-[3px] bg-slate-100 dark:bg-slate-800 relative">
+<div class="absolute top-0 left-0 h-full bg-primary" style="width: 6.66%;"></div>
+</div>
+<main class="flex-1 max-w-2xl mx-auto w-full px-6 py-16 md:py-24">
+<div class="text-center mb-12">
+<h2 class="serif-text text-4xl md:text-5xl lg:text-6xl text-slate-800 dark:text-white leading-tight">
+                ¿Cómo te sientes hoy dentro de la relación?
+            </h2>
+</div>
+<div class="space-y-4">
+<button class="w-full text-left p-6 md:p-8 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary rounded-2xl shadow-sm hover:shadow-md transition-all group">
+<div class="flex items-center justify-between">
+<span class="text-lg md:text-xl font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                        Me siento tranquilo/a y acompañado/a
+                    </span>
+<span class="material-icons-outlined text-slate-300 dark:text-slate-700 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</button>
+<button class="w-full text-left p-6 md:p-8 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary rounded-2xl shadow-sm hover:shadow-md transition-all group">
+<div class="flex items-center justify-between">
+<span class="text-lg md:text-xl font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                        A veces bien, a veces agotado/a
+                    </span>
+<span class="material-icons-outlined text-slate-300 dark:text-slate-700 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</button>
+<button class="w-full text-left p-6 md:p-8 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary rounded-2xl shadow-sm hover:shadow-md transition-all group">
+<div class="flex items-center justify-between">
+<span class="text-lg md:text-xl font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                        Más cansado/a que en paz
+                    </span>
+<span class="material-icons-outlined text-slate-300 dark:text-slate-700 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</button>
+<button class="w-full text-left p-6 md:p-8 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary rounded-2xl shadow-sm hover:shadow-md transition-all group">
+<div class="flex items-center justify-between">
+<span class="text-lg md:text-xl font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                        Constantemente en tensión
+                    </span>
+<span class="material-icons-outlined text-slate-300 dark:text-slate-700 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</button>
+</div>
+<p class="mt-12 text-center text-slate-400 dark:text-slate-600 text-sm italic">
+            Tus respuestas son privadas y seguras.
+        </p>
+</main>
+<div class="fixed bottom-6 right-6">
+<button class="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-icons-outlined">dark_mode</span>
+</button>
+</div>
+
+</body></html>

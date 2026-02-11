@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 255 249 246;
+    /* #faf9f6 converted to rgb for potential opacity usage if needed, but keeping hex in config is simpler. */
+  }
+
+  body {
+    @apply bg-background text-foreground font-serif;
+  }
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Acceso Seguro al Diagnóstico | Intentémoslo de Nuevo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Outfit:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#79c302",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                    },
+                    fontFamily: {
+                        display: ["Outfit", "Inter", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        .material-symbols-rounded {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark transition-colors duration-300 min-h-screen flex flex-col">
+<nav class="w-full border-b border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-1">
+<span class="text-primary text-2xl font-bold tracking-tight">intentémoslo</span>
+<span class="text-gray-400 dark:text-gray-500 font-light">| de nuevo</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+<span class="material-symbols-rounded text-lg">lock</span>
+                    Pago Seguro SSL
+                </div>
+<button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-symbols-rounded dark:hidden text-gray-600">dark_mode</span>
+<span class="material-symbols-rounded hidden dark:block text-yellow-400">light_mode</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="flex-grow flex items-center justify-center p-6 lg:p-12">
+<div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+<div class="space-y-10 py-4">
+<div>
+<div class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider mb-6">
+                        Acceso Premium
+                    </div>
+<h1 class="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white leading-[1.1] mb-6">
+                        Tu camino hacia el <br/><span class="text-primary">bienestar emocional</span> <br/>comienza aquí.
+                    </h1>
+<p class="text-lg text-gray-600 dark:text-gray-400 max-w-lg leading-relaxed">
+                        Únete a miles de personas que ya han descubierto las herramientas para sanar y crecer. Sin suscripciones, sin letras pequeñas.
+                    </p>
+</div>
+<ul class="space-y-6">
+<li class="flex items-start gap-4">
+<div class="mt-1 flex-shrink-0 w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-rounded text-primary text-sm">check</span>
+</div>
+<div>
+<p class="font-bold text-gray-900 dark:text-gray-200">Pago único</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">Sin suscripciones recurrentes ni cargos sorpresa.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="mt-1 flex-shrink-0 w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-rounded text-primary text-sm">check</span>
+</div>
+<div>
+<p class="font-bold text-gray-900 dark:text-gray-200">Privacidad total</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">Tus datos están protegidos bajo los más altos estándares de seguridad.</p>
+</div>
+</li>
+</ul>
+<div class="relative max-w-md">
+<div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700 flex flex-col gap-6">
+<div class="flex items-center gap-4">
+<div class="flex -space-x-3">
+<img alt="Usuario 1" class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTFOhuGpxxJm8zHMcm7zXcB0KfuzTcwOP0m3pYLTtUemyDfiDDrkjomtPPDCRnS7eOwamfZ6ry7V6wNDs0UV-emXPsuoNoh9TTghJL7Iwq3U7uP7u4DcwAodAo3tf6DRfSUYUJpjLXzJo88kGqWGQxpAbJP0XD0BvDg5UIl0b5nO7OpaBPhXHa_hSKkTVJBTiTLRL-p5XJl-cWcf5AkkuqrisfG5BSIxBLPKe8Nc993GMYvBxklaa9GkDRAMpNRQajwKvLO9iMrpE"/>
+<img alt="Usuario 2" class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv1jg2qypIGGsjmN4WjnIio6evvgGXvoolgBzSrqiKcwWdHZkmzm8GpTZZMNay70_GvDNOhl8lbePV8oAfPE5a2wv1Gt-yLZUyp_mmAYn8yCAAEPvanL4tLs9q17HhIRVaksrKE1iKhge-tCrbAWerIaen7v5oAXbwsEAGUC_gTSksdeYLXqmQr1OzfOTs5MosK3AFhu3zoRNCOGWKgfV5SNmKkDY7JQdqKgt0WpgtcBvL-CTlr0ngZ6nc-tzf1ORmdA6E619eWgw"/>
+<img alt="Usuario 3" class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6_dU5JIhAsVYZm64MZ0GvtaTCCyjweeTwpk68FmUNq9ozQATyjcLEMJCXzY4NTh_hhakQFEqMIyjOqUzHoBe9G4QHYIisd9yAt6VXr6TIOy-7y8-wxNSPlrcSJHvh65Mn7i-OhrO1gTQN0-0u7Tijmvda5hE_Xqy15c14VW7JMdSpAmwPhItbgphbfNVo5laXjSPokpz7GUN6w-DCaSv4QEPL2hHbj5ynqflqQ9hhz2A-kAEJONeUM-1t7LOiTl-ECkh2mT6SP5c"/>
+</div>
+<div class="text-sm">
+<p class="text-gray-900 dark:text-white font-bold">Respaldo profesional</p>
+<p class="text-gray-500 dark:text-gray-400">Más de 25,000 diagnósticos realizados con éxito.</p>
+</div>
+</div>
+<div class="pt-4 border-t border-gray-50 dark:border-gray-700">
+<div class="flex gap-2 items-start">
+<span class="material-symbols-rounded text-primary text-lg">format_quote</span>
+<p class="text-sm italic text-gray-600 dark:text-gray-400">"El diagnóstico me dio la claridad que necesitaba para empezar a sanar mis relaciones. Un proceso muy sencillo y profesional."</p>
+</div>
+<p class="text-xs font-bold text-gray-400 dark:text-gray-500 mt-2 ml-7">— María R., usuaria verificada</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-gray-900 rounded-[2.5rem] p-10 shadow-2xl shadow-gray-200/60 dark:shadow-black/40 border border-gray-100 dark:border-gray-800">
+<div class="mb-10">
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white">Detalles del pago</h2>
+<p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Completa tu acceso seguro al diagnóstico.</p>
+</div>
+<div class="space-y-8">
+<div class="flex justify-between items-end pb-8 border-b border-gray-100 dark:border-gray-800">
+<div>
+<p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Total a pagar</p>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-bold text-gray-900 dark:text-white">$49.00</span>
+<span class="text-sm font-medium text-gray-400 uppercase">USD</span>
+</div>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1.5 rounded-full uppercase tracking-wider">
+<span class="material-symbols-rounded text-xs">verified</span> Pago Único
+                            </span>
+</div>
+</div>
+<div class="space-y-5">
+<div class="space-y-2">
+<label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Email</label>
+<input class="w-full bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:ring-primary focus:border-primary transition-all placeholder:text-gray-400" placeholder="tu@email.com" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Información de tarjeta</label>
+<div class="relative group">
+<input class="w-full bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700 rounded-t-xl px-4 py-3.5 text-gray-900 dark:text-white focus:ring-primary focus:border-primary transition-all placeholder:text-gray-400" placeholder="1234 5678 1234 5678" type="text"/>
+<div class="absolute right-4 top-3.5">
+<span class="material-symbols-rounded text-gray-300 group-focus-within:text-primary transition-colors">credit_card</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-px bg-gray-100 dark:bg-gray-700 rounded-b-xl overflow-hidden">
+<input class="w-full bg-gray-50 dark:bg-gray-800/50 border-none px-4 py-3.5 text-gray-900 dark:text-white focus:ring-primary transition-all placeholder:text-gray-400" placeholder="MM / YY" type="text"/>
+<input class="w-full bg-gray-50 dark:bg-gray-800/50 border-none px-4 py-3.5 text-gray-900 dark:text-white focus:ring-primary transition-all placeholder:text-gray-400" placeholder="CVC" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Nombre en la tarjeta</label>
+<input class="w-full bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:ring-primary focus:border-primary transition-all placeholder:text-gray-400" placeholder="Nombre completo" type="text"/>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-[#6ba802] text-white font-bold py-4.5 px-6 rounded-2xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] flex items-center justify-center gap-3 text-lg py-5">
+<span class="material-symbols-rounded">shield_lock</span>
+                        Obtener mi diagnóstico
+                    </button>
+<div class="flex flex-col items-center gap-5 pt-4">
+<div class="flex gap-6 grayscale opacity-40 hover:opacity-100 transition-opacity dark:invert">
+<img alt="Stripe" class="h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYmTMkJO-3KWyhwczHyg4ypKfZyJCa11-QiJSD6ZLdnGPaV-Pe91vUiqAlgSlPY92vQIoEY8ZBiPF69ZMtXKBr-wzhCBZzlO_8HDf-_PHUPhEDYoQ-6o68F26n-3m3pe9JiB9yBaLX_5w-0SSnczeRU4VbUfBzsUv-6TrpaW5KXzARNe4rpHL2l2wBEeZVCDHmu-bkVzk0jZXUZQJYjyHL3y8u0HiN-0uMAKxCArH6qiges-aaGgdNhYAeDqB9g0l87rnVq3wG_Do"/>
+<img alt="Visa" class="h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbHUfRDeY-h1UHdr97zYI9Z7Olqnk46Y1J6qpDVl9p5Y9M9r8huofmCIVguPsvAL_m_M7o8dRx4VHRGzFWbFPgwk3OuC9zrgLd-4AU0AuwsqSFjQ-1vMnsPqXmYsrH_Dlxzgepvj7tdlExtkrwpL0g05vUvFmZCS0gSTT2VY5lfu1jgPQft7rnG2pbRdMsKKaQTLduCmcykN2g7wirewKTQw5euek3q8aGaGdQhp-z86zETafNpZA7STKF-PFLoUzEawTxsqjRjjE"/>
+<img alt="Mastercard" class="h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDp_8uatY39OdiP5mElo7XBVYPUAJyZ5DV5duovSDED2JmpSCHanaFfAfFCtlXFFTxnsK6zCXWVnKZVRCVu_byGgp80tV05lySpntye7er30X-ZhO_OTrNc2xSa37xo9bIBSeQ7PYQDH2X4_LXKzGEcTigjAwXgI1zpY4q_03xwDsnCidvnhw6DDXh6jAnLFxCOUVqEmuBcFIF77Gy5FU2xxy7NvWRFToGchmdL6hpzeEdzSr9fPJnKVofH8tERfnGcMFlrq_0gRWQ"/>
+</div>
+<p class="text-[10px] text-gray-400 dark:text-gray-500 text-center uppercase tracking-[0.15em] font-semibold">
+                            Encriptación de 256 bits · No almacenamos tus datos bancarios
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="py-10 px-6 border-t border-gray-100 dark:border-gray-900 bg-white/30 dark:bg-gray-950/30">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+<p>© 2024 Intentémoslo de Nuevo. Todos los derechos reservados.</p>
+<div class="flex gap-8">
+<a class="hover:text-primary transition-colors" href="#">Términos de Servicio</a>
+<a class="hover:text-primary transition-colors" href="#">Política de Privacidad</a>
+<a class="hover:text-primary transition-colors" href="#">Ayuda y Soporte</a>
+</div>
+</div>
+</footer>
+
+</body></html>
