@@ -67,7 +67,7 @@ export function LeadMagnetBlock({
 
                 {/* Contextual CTA based on source */}
                 {source.includes('landing') && (
-                    <div className="pt-4 border-t border-primary/10">
+                    <div className="pt-4 border-t border-primary/10 flex flex-col items-center">
                         <p className="font-bold text-brand-navy mb-4">
                             ¿Quieres saber en qué rango estás realmente?
                         </p>
