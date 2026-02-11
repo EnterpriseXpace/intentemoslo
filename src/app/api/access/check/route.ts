@@ -36,7 +36,7 @@ export async function GET(req: Request) {
         }
 
         // Determine highest access level
-        const hasDeep = purchases.some(p => p.product_type === 'deep') // Upgrade is stored as 'deep' too
+        const hasDeep = purchases.some(p => p.product_type === 'deep' || p.product_type === 'upgrade')
         const access = hasDeep ? 'deep' : 'quick'
 
         return NextResponse.json({ access })
