@@ -13,7 +13,8 @@ const ALLOWED_EVENTS = new Set([
     'result_viewed',
     'email_submitted',
     'diagnostic_repeated',
-    'session_started'
+    'session_started',
+    'payment_initiated'
 ]);
 
 // Simple in-memory cache for session -> country to avoid repeated API calls

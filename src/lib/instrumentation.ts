@@ -15,10 +15,11 @@ export type AnalyticsEvent =
     | 'email_submitted'
     | 'diagnostic_repeated'
     | 'session_started'
-    | 'feedback_submitted';
+    | 'feedback_submitted'
+    | 'payment_initiated';
 
 interface TrackOptions {
-    productType?: 'quick' | 'deep';
+    productType?: 'quick' | 'deep' | 'upgrade';
     metadata?: Record<string, any>;
     step?: string; // Legacy support, move to metadata
 }
