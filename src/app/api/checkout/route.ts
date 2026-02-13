@@ -74,11 +74,10 @@ export async function POST(req: Request) {
                 },
             ],
             mode: 'payment',
-            // Success URL: Strict separation of flows
-            // Upgrade: MUST NOT include currentUrlParams (Quick answers) to avoid contamination.
-            // Deep/Quick: MUST include currentUrlParams to preserve answers.
+            // Success URL: Unified flow
+            // Upgrade: Treated as 'deep' to ensure correct access check and preserving params.
             success_url: productType === 'upgrade'
-                ? `${origin}/thank-you?session_id={CHECKOUT_SESSION_ID}&type=upgrade`
+                ? `${origin}/thank-you?session_id={CHECKOUT_SESSION_ID}&type=deep&${currentUrlParams || ''}`
                 : `${origin}/thank-you?session_id={CHECKOUT_SESSION_ID}&type=${productType}&${currentUrlParams || ''}`,
 
             cancel_url: `${origin}/checkout?type=${productType}`,
