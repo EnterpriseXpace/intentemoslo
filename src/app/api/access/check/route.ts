@@ -25,7 +25,7 @@ export async function GET(req: Request) {
         const { data: purchases, error } = await supabaseAdmin
             .from('purchases')
             .select('product_type, status')
-            .eq('email', email)
+            .eq('customer_email', email)
             .eq('product_type', 'deep')
             .in('status', ['paid', 'completed'])
             .limit(1)

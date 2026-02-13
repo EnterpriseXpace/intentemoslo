@@ -31,10 +31,11 @@ export async function POST(req: Request) {
 
         // Idempotency Check
         try {
+            // FIX: Use correct column name 'session_id' instead of 'stripe_session_id'
             const { data: existingPurchase, error: fetchError } = await supabaseAdmin
                 .from('purchases')
                 .select('id')
-                .eq('stripe_session_id', session.id)
+                .eq('session_id', session.id)
                 .single()
 
             if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
             }
 
             if (existingPurchase) {
-                console.log(`Purchase already recorded for session ${session.id}`)
+                console.log(`[WEBHOOK] Purchase already recorded for session ${session.id}`)
                 return NextResponse.json({ received: true })
             }
 
@@ -53,23 +54,27 @@ export async function POST(req: Request) {
             // Logic: if 'upgrade', store as 'deep'
             const finalProductType = productType === 'upgrade' ? 'deep' : productType
 
+            console.log(`[WEBHOOK] Processing purchase: ${session.id} | Type: ${productType} -> ${finalProductType} | Email: ${session.customer_details?.email}`)
+
             // Insert into DB
+            // FIX: Use correct column names: session_id, customer_email
             const { error: insertError } = await supabaseAdmin.from('purchases').insert({
-                stripe_session_id: session.id,
-                email: session.customer_details?.email || session.customer_email || '',
+                session_id: session.id,
+                customer_email: session.customer_details?.email || session.customer_email || '',
                 product_type: finalProductType,
                 amount: session.amount_total ? session.amount_total / 100 : 0,
                 status: session.payment_status || 'completed',
+                metadata: metadata // Store full metadata just in case
             })
 
             if (insertError) {
-                console.error('Supabase Insert Error:', insertError)
+                console.error('[WEBHOOK] Supabase Insert Error:', insertError)
                 return new NextResponse(`Database Error: ${insertError.message}`, { status: 500 })
             }
 
-            console.log(`Purchase recorded: ${session.id} (${finalProductType})`)
+            console.log(`[WEBHOOK] SUCCESS: Purchase recorded for ${session.id} as ${finalProductType}`)
         } catch (err: any) {
-            console.error('Unexpected Webhook Error:', err)
+            console.error('[WEBHOOK] Unexpected Webhook Error:', err)
             return new NextResponse(`Internal Server Error: ${err.message}`, { status: 500 })
         }
 
