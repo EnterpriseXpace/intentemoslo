@@ -7,21 +7,24 @@ export function middleware(req: NextRequest) {
         const basicAuth = req.headers.get('authorization')
 
         if (basicAuth) {
-            const authValue = basicAuth.split(' ')[1]
-            const [user, pwd] = atob(authValue).split(':')
+            try {
+                const authValue = basicAuth.split(' ')[1]
+                const [user, pwd] = atob(authValue).split(':')
 
-            // Hardcoded for MVP or use env vars
-            // User: admin
-            // Pass: intentemoslo
-            if (user === 'admin' && pwd === 'intentemoslo') {
-                return NextResponse.next()
+                // Credentials: admin / intentemoslo
+                if (user === 'admin' && pwd === 'intentemoslo') {
+                    return NextResponse.next()
+                }
+                console.log(`[AUTH] Failed attempt for user: ${user}`)
+            } catch (e) {
+                console.error('[AUTH] Error parsing credentials')
             }
         }
 
         return new NextResponse('Auth Required', {
             status: 401,
             headers: {
-                'WWW-Authenticate': 'Basic realm="Secure Area"',
+                'WWW-Authenticate': 'Basic realm="Secure Admin Area"',
             },
         })
     }
@@ -30,5 +33,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: '/admin/:path*',
+    matcher: ['/admin/:path*']
 }

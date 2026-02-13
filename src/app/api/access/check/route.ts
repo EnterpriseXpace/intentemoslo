@@ -12,8 +12,8 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const email = searchParams.get('email')
 
-    console.log('--- ACCESS CHECK ---')
-    console.log('Checking access for email:', email)
+    console.log("[ACCESS CHECK] Email recibido:", email)
+
 
     if (!email) {
         console.log('No email provided. Access denied.')
@@ -35,7 +35,8 @@ export async function GET(req: Request) {
             return NextResponse.json({ access: 'none' }, { status: 500 })
         }
 
-        console.log('Query result:', purchases)
+        console.log("[ACCESS CHECK] Resultado query:", purchases)
+
 
         if (purchases && purchases.length > 0) {
             console.log('Access GRANTED: deep')
