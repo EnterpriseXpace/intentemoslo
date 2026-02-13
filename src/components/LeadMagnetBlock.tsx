@@ -73,7 +73,7 @@ export function LeadMagnetBlock({
                         </p>
                         <Link href="/checklist">
                             <Button className="w-full md:w-auto px-8 py-6 h-auto text-lg rounded-full shadow-lg animate-pulse hover:animate-none">
-                                Comenzar diagnóstico por $5 <ArrowRight className="ml-2 w-5 h-5" />
+                                Comenzar diagnóstico <ArrowRight className="ml-2 w-5 h-5" />
                             </Button>
                         </Link>
                     </div>
