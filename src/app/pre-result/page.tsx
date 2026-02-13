@@ -1,11 +1,11 @@
 "use client"
 
-import { Suspense, useEffect } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Header } from "@/components/layout/Header"
 import { Container } from "@/components/layout/Container"
 import { Button } from "@/components/ui/Button"
-import { Lock, CheckCircle2 } from "lucide-react"
+import { Lock, CheckCircle2, Loader2 } from "lucide-react"
 import { trackEvent } from "@/lib/instrumentation"
 
 function PreResultContent() {
@@ -24,6 +24,12 @@ function PreResultContent() {
 
     const price = isDeep ? deepPrice : quickPrice
     const productType = isDeep ? 'deep' : 'quick'
+
+    // --- DEBUG LOGS (URGENT) ---
+    console.log(`[PRE-RESULT] Initializing for type=${type}, isDeep=${isDeep}`)
+
+    const [isChecking, setIsChecking] = useState(true) // Start validando
+
 
     useEffect(() => {
         trackEvent('pre_result_viewed', { productType })
@@ -46,30 +52,58 @@ function PreResultContent() {
                     const storedEmail = sessionStorage.getItem("customer_email")
                     const emailToCheck = urlEmail || storedEmail
 
+                    console.log("[PRE-RESULT] Checking Access:", {
+                        urlEmail,
+                        storedEmail,
+                        emailToCheck,
+                        isDeep
+                    })
+
                     if (urlEmail) {
                         sessionStorage.setItem("customer_email", urlEmail)
                     }
 
                     if (!emailToCheck) {
-                        console.log("No email found for access check")
+                        console.warn("[PRE-RESULT] No email found for access check -> Showing Lock Screen")
+                        setIsChecking(false)
                         return
                     }
 
                     const res = await fetch(`/api/access/check?email=${encodeURIComponent(emailToCheck)}`)
                     const data = await res.json()
 
+                    console.log("[PRE-RESULT] API Response:", data)
+
                     if (data.access === 'deep') {
+                        console.log("[PRE-RESULT] Access GRANTED -> Redirecting to result")
                         // Already paid! Redirect to result with params
                         const params = new URLSearchParams(searchParams.toString())
                         router.replace(`/result?${params.toString()}`)
+                        // Note: We keep isChecking true so we don't flash the lock screen while redirecting
+                    } else {
+                        console.warn("[PRE-RESULT] Access DENIED (or not deep) -> Showing Lock Screen. Access:", data.access)
+                        setIsChecking(false)
                     }
+                } else {
+                    // Not deep? Just show lock screen
+                    setIsChecking(false)
                 }
             } catch (e) {
-                console.error("Auth check failed", e)
+                console.error("[PRE-RESULT] Auth check failed", e)
+                setIsChecking(false)
             }
         }
         checkAccess()
     }, [isDeep, searchParams, router])
+
+    if (isChecking && isDeep) {
+        return (
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
+                <p className="text-muted-foreground animate-pulse">Verificando acceso...</p>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen bg-background flex flex-col">

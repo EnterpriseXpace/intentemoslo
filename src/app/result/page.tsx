@@ -175,45 +175,24 @@ function ResultContent() {
                 let accessLevel = 'none'
 
                 if (emailToCheck) {
+                    console.log("[RESULT PAGE] Verifying access for:", emailToCheck)
                     const res = await fetch(`/api/access/check?email=${encodeURIComponent(emailToCheck)}`)
                     const data = await res.json()
                     accessLevel = data.access
+                    console.log("[RESULT PAGE] API Response:", data)
                 }
 
-                // Logic correction: 
-                // If isDeep is true, we REQUIRE accessLevel === 'deep'
-                // If isDeep is false (Quick), do we require 'quick' access? 
-                // Usually Quick is free or handled differently. 
-                // Based on previous code: `if (data.access === 'none')` caused redirect.
-                // So Quick also needs some verification? 
-                // Re-reading user request: "Deep purchases exist... deep result page remains blocked."
-                // The focus is on DEEP.
-
-                // Let's keep strictness for DEEP.
+                console.log(`[RESULT PAGE] Access Check Result: Level='${accessLevel}', Required='${isDeep ? 'deep' : 'any'}'`)
 
                 if (isDeep && accessLevel !== 'deep') {
-                    // Failed Deep Access
+                    console.warn("[RESULT PAGE] Deep Access DENIED -> Redirecting to Checkout")
                     setAuthorized(false)
                     router.push(`/checkout?type=deep&${searchParams.toString()}`)
                     return
                 }
 
-                // If not deep (Quick), and we are here...
-                // Previous logic redirected if access === 'none'
-                // But if they just did the test and haven't paid? 
-                // Wait, Quick IS paid in some contexts? "Ver análisis completo (US$ 27)" implies paying.
-                // There is also a "Quick" product.
-                // Let's assume strict check for now as per previous logic.
-
-                // However, if it's Quick and they haven't paid, maybe they are seeing the free preview?
-                // The previous code had: `if (data.access === 'none') ... router.push('/checkout')`.
-                // So YES, it seems even Quick requires a "purchase" record (maybe free or paid).
-                // OR the user intends to block everything if not authorized.
-
-                // For this specific task (Fix Deep Access), I will ensure deep check is correct.
-                // If accessLevel is 'none' and we are 'deep', we definitely block.
-
                 // Use the checked access level
+                console.log("[RESULT PAGE] Access GRANTED. Rendering content.")
                 setAuthorized(true)
 
                 if (!hasTrackedViewRef.current) {
@@ -226,7 +205,7 @@ function ResultContent() {
                     })
                 }
             } catch (e) {
-                console.error("Auth check failed", e)
+                console.error("[RESULT PAGE] Auth check failed", e)
             }
         }
 
