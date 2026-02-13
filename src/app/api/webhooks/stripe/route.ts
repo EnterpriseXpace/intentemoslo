@@ -13,6 +13,7 @@ const supabaseAdmin = createClient(
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
 export async function POST(req: Request) {
+    console.log("[WEBHOOK] STARTING - Stripe event received")
     const body = await req.text()
     const sig = headers().get('stripe-signature') as string
 
