@@ -30,42 +30,50 @@ export async function POST(req: Request) {
         const session = event.data.object as Stripe.Checkout.Session
 
         // Idempotency Check
-        const { data: existingPurchase } = await supabaseAdmin
-            .from('purchases')
-            .select('id')
-            .eq('session_id', session.id)
-            .single()
+        try {
+            const { data: existingPurchase, error: fetchError } = await supabaseAdmin
+                .from('purchases')
+                .select('id')
+                .eq('stripe_session_id', session.id)
+                .single()
 
-        if (existingPurchase) {
-            console.log(`Purchase already recorded for session ${session.id}`)
-            return NextResponse.json({ received: true })
+            if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+                console.error('Error checking existing purchase:', fetchError)
+            }
+
+            if (existingPurchase) {
+                console.log(`Purchase already recorded for session ${session.id}`)
+                return NextResponse.json({ received: true })
+            }
+
+            // Extract metadata
+            const metadata = session.metadata || {}
+            const productType = metadata.productType || 'quick'
+
+            // Logic: if 'upgrade', store as 'deep'
+            const finalProductType = productType === 'upgrade' ? 'deep' : productType
+
+            // Insert into DB
+            const { error: insertError } = await supabaseAdmin.from('purchases').insert({
+                stripe_session_id: session.id,
+                email: session.customer_details?.email || session.customer_email || '',
+                product_type: finalProductType,
+                amount: session.amount_total ? session.amount_total / 100 : 0,
+                status: session.payment_status || 'completed',
+            })
+
+            if (insertError) {
+                console.error('Supabase Insert Error:', insertError)
+                return new NextResponse(`Database Error: ${insertError.message}`, { status: 500 })
+            }
+
+            console.log(`Purchase recorded: ${session.id} (${finalProductType})`)
+        } catch (err: any) {
+            console.error('Unexpected Webhook Error:', err)
+            return new NextResponse(`Internal Server Error: ${err.message}`, { status: 500 })
         }
 
-        // Extract metadata
-        const metadata = session.metadata || {}
-        const productType = metadata.productType || 'quick'
-        const clientSessionId = metadata.clientSessionId || null
 
-        // Logic: if 'upgrade', store as 'deep'
-        const finalProductType = productType === 'upgrade' ? 'deep' : productType
-
-        // Insert into DB
-        const { error } = await supabaseAdmin.from('purchases').insert({
-            session_id: session.id,
-            customer_email: session.customer_details?.email || session.customer_email,
-            product_type: finalProductType,
-            amount: session.amount_total ? session.amount_total / 100 : 0,
-            status: 'completed',
-            client_session_id: clientSessionId,
-            metadata: metadata
-        })
-
-        if (error) {
-            console.error('Error recording purchase:', error)
-            return new NextResponse('Database Error', { status: 500 })
-        }
-
-        console.log(`Purchase recorded: ${session.id} (${finalProductType})`)
     }
 
     return NextResponse.json({ received: true })
