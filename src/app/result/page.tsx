@@ -153,6 +153,10 @@ function ResultContent() {
                 const storedEmail = sessionStorage.getItem("customer_email")
                 const emailToCheck = urlEmail || storedEmail
 
+                console.log("[RESULT PAGE] emailToCheck:", emailToCheck)
+                console.log("[RESULT PAGE] type param:", type)
+
+
                 if (urlEmail) {
                     sessionStorage.setItem("customer_email", urlEmail)
                 }
@@ -164,9 +168,9 @@ function ResultContent() {
                     // If QUICK, we don't strictly need payment check from DB if it's just calculation?
                     // The prompt implies we are blocking DEEP results.
                     if (isDeep) {
-                        console.log("No email for Deep Access Check -> Redirecting")
-                        setAuthorized(false)
-                        router.push(`/checkout?type=deep&${searchParams.toString()}`)
+                        console.log("No email for Deep Access Check -> SKIPPING REDIRECT (DEBUG MODE)")
+                        // setAuthorized(false)
+                        // router.push(`/checkout?type=deep&${searchParams.toString()}`)
                         return
                     }
                 }
@@ -184,7 +188,11 @@ function ResultContent() {
 
                 console.log(`[RESULT PAGE] Access Check Result: Level='${accessLevel}', Required='${isDeep ? 'deep' : 'any'}'`)
 
-                if (isDeep && accessLevel !== 'deep') {
+                console.log("[RESULT PAGE] accessLevel before redirect:", accessLevel)
+
+                // MODIFIED LOGIC: Redirect ONLY if accessLevel is 'none' AND we have an email
+                if (isDeep && accessLevel === 'none' && emailToCheck) {
+                    console.log("[RESULT PAGE] REDIRECTING TO CHECKOUT")
                     console.warn("[RESULT PAGE] Deep Access DENIED -> Redirecting to Checkout")
                     setAuthorized(false)
                     router.push(`/checkout?type=deep&${searchParams.toString()}`)
