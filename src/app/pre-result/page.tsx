@@ -41,7 +41,21 @@ function PreResultContent() {
             try {
                 // If we are in Deep flow, check if we already have deep access
                 if (isDeep) {
-                    const res = await fetch('/api/access/check')
+                    // Priority: 1. URL Param (from Stripe) 2. SessionStorage
+                    const urlEmail = searchParams.get("email")
+                    const storedEmail = sessionStorage.getItem("customer_email")
+                    const emailToCheck = urlEmail || storedEmail
+
+                    if (urlEmail) {
+                        sessionStorage.setItem("customer_email", urlEmail)
+                    }
+
+                    if (!emailToCheck) {
+                        console.log("No email found for access check")
+                        return
+                    }
+
+                    const res = await fetch(`/api/access/check?email=${encodeURIComponent(emailToCheck)}`)
                     const data = await res.json()
 
                     if (data.access === 'deep') {

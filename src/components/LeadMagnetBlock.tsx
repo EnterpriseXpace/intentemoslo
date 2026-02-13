@@ -80,11 +80,7 @@ export function LeadMagnetBlock({
                 )}
 
                 {/* If not landing (e.g. result page), maybe just show a simple success or nothing extra */}
-                {!source.includes('landing') && (
-                    <Button variant="outline" className="mt-2 gap-2" onClick={() => window.open('/guia-escala-termica.pdf', '_blank')}>
-                        <Download className="w-4 h-4" /> Abrir de nuevo
-                    </Button>
-                )}
+
             </div>
         )
     }

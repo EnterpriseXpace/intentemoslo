@@ -9,40 +9,44 @@ const supabaseAdmin = createClient(
 )
 
 export async function GET(req: Request) {
-    const cookieStore = cookies()
-    const clientSessionId = cookieStore.get('antigravity_client_tracker')?.value
+    const { searchParams } = new URL(req.url)
+    const email = searchParams.get('email')
 
-    if (!clientSessionId) {
+    console.log('--- ACCESS CHECK ---')
+    console.log('Checking access for email:', email)
+
+    if (!email) {
+        console.log('No email provided. Access denied.')
         return NextResponse.json({ access: 'none' })
     }
 
     try {
-        // Query for ANY successful purchase linked to this client session
-        // Sort by product_type to prioritize 'deep' if both exist (custom logic or simple check)
-        // Actually, we can just fetch all and determine max level.
+        // Strict query: Email + Deep + Paid/Completed
         const { data: purchases, error } = await supabaseAdmin
             .from('purchases')
-            .select('product_type')
-            .eq('client_session_id', clientSessionId)
-            .eq('status', 'completed')
+            .select('product_type, status')
+            .eq('email', email)
+            .eq('product_type', 'deep')
+            .in('status', ['paid', 'completed'])
+            .limit(1)
 
         if (error) {
             console.error('Access Check DB Error:', error)
             return NextResponse.json({ access: 'none' }, { status: 500 })
         }
 
-        if (!purchases || purchases.length === 0) {
-            return NextResponse.json({ access: 'none' })
+        console.log('Query result:', purchases)
+
+        if (purchases && purchases.length > 0) {
+            console.log('Access GRANTED: deep')
+            return NextResponse.json({ access: 'deep' })
         }
 
-        // Determine highest access level
-        const hasDeep = purchases.some(p => p.product_type === 'deep' || p.product_type === 'upgrade')
-        const access = hasDeep ? 'deep' : 'quick'
-
-        return NextResponse.json({ access })
+        console.log('Access DENIED: No matching strict record found.')
+        return NextResponse.json({ access: 'none' })
 
     } catch (error) {
-        console.error('Access Check Error:', error)
+        console.error('Access Check Unexpected Error:', error)
         return NextResponse.json({ access: 'none' }, { status: 500 })
     }
 }
