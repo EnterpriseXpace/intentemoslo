@@ -330,44 +330,23 @@ function ResultContent() {
                         {type === "deep" ? (
                             // === DEEP REPORT COMPONENTS (NEW ORDER) ===
                             <>
-                                {/* 0. Human Summary (First!) */}
-                                <div className="print:break-inside-avoid">
-                                    <DeepSummary summary={humanSummary} />
-                                </div>
-
-                                {/* 1. Global Metrics (Context) */}
-                                <div className="grid md:grid-cols-2 gap-8 items-center bg-white rounded-3xl p-8 border border-border/50 shadow-sm print:shadow-none print:border-none print:p-0">
-                                    <div className="order-2 md:order-1 space-y-4">
-                                        <h2 className="text-2xl font-bold font-display">Estado Global</h2>
-                                        <p className="text-muted-foreground leading-relaxed">
-                                            Tu puntuación global basada en el análisis estructural. Funciona como un termómetro de la salud relacional actual.
-                                        </p>
-                                        <div className="mt-2 p-3 bg-primary/5 rounded-lg border border-primary/10 text-xs text-muted-foreground space-y-1">
-                                            <p className="font-bold text-primary/80">Nota importante</p>
-                                            <p>El IER refleja el estado estructural actual de la relación. Un puntaje alto indica solidez funcional en este momento, no una garantía permanente.</p>
-                                        </div>
-                                    </div>
-                                    <div className="order-1 md:order-2 flex justify-center">
-                                        <ResultMetric value={ierScore} label="Nivel de Solidez" />
-                                    </div>
-                                </div>
-
-                                {/* 2. Dimensions (Cards) */}
+                                {/* 1. Dimensions (Detailed Analysis) */}
                                 <div className="print:break-inside-avoid">
                                     <DeepDimensions dimensions={deepDimensions} />
                                 </div>
 
-                                {/* 3. Dominant Pattern */}
-                                <div className="print:break-inside-avoid">
-                                    <DeepPattern pattern={dominantPattern} />
-                                </div>
-
-                                {/* 4. Temporal Risk */}
+                                {/* 2. Temporal Risk (Visual Map) */}
                                 <div className="print:break-inside-avoid">
                                     <DeepRisk risk={temporalRisk} />
                                 </div>
 
-                                {/* 5. Strategic Recommendations */}
+                                {/* 3. Strategic Diagnosis (Summary + Pattern) */}
+                                <div className="print:break-inside-avoid space-y-8">
+                                    <DeepSummary summary={humanSummary} />
+                                    <DeepPattern pattern={dominantPattern} />
+                                </div>
+
+                                {/* 4. Action Plan (Recommendations) */}
                                 <div className="print:break-inside-avoid">
                                     <DeepRecommendations recommendations={deepRecommendations} />
                                 </div>
@@ -392,7 +371,7 @@ function ResultContent() {
                                     </div>
                                 </div>
 
-                                {/* 2. Traffic Light */}
+                                {/* 2. Traffic Light (Patterns) */}
                                 <div className="bg-white rounded-3xl p-8 border border-border/50 shadow-sm print:break-inside-avoid print:shadow-none print:border-black/10">
                                     <TrafficLight
                                         greenFactors={greenFactors}
@@ -412,63 +391,46 @@ function ResultContent() {
                                     <ActionableSteps ierScore={ierScore} />
                                 </div>
 
-                                {/* 5. Lead Magnet Block (Strategic Replacement) */}
+                                {/* 5. UPSELL BLOCK (Integrated) */}
+                                <div className="bg-[#161811] text-[#f0efe9] rounded-3xl p-10 text-center space-y-6 print:hidden relative overflow-hidden my-8">
+                                    {/* Background Glow */}
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 hover:bg-primary/30 blur-[100px] transition-all duration-700 rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+
+                                    <h3 className="text-3xl font-bold font-display relative z-10">
+                                        ¿Quieres entender qué está afectando exactamente tu relación?
+                                    </h3>
+
+                                    <div className="py-4 relative z-10">
+                                        <div className="text-5xl font-bold text-primary mb-2">{ierScore}°</div>
+                                        <div className="text-white/60 text-sm uppercase tracking-widest">Tu Temperatura Actual</div>
+                                    </div>
+
+                                    <p className="text-white/70 max-w-xl mx-auto text-lg relative z-10">
+                                        La <strong>Evaluación Profunda</strong> identifica qué dimensión específica (Comunicación, Confianza, etc.) está debilitando la relación y te ofrece una hoja de ruta clara de recuperación.
+                                    </p>
+
+                                    <div className="pt-4 relative z-10">
+                                        <Link href={`/checkout?type=upgrade&${searchParams.toString()}`} className="inline-block">
+                                            <Button className="bg-[#a6f20d] hover:bg-[#95da0b] text-[#161811] font-bold h-16 px-10 text-xl rounded-full mx-auto shadow-xl shadow-[#a6f20d]/20 transition-transform active:scale-95 animate-pulse hover:animate-none">
+                                                Actualizar ahora por solo $17
+                                            </Button>
+                                        </Link>
+                                        <p className="mt-3 text-xs text-white/40 uppercase tracking-widest">
+                                            Precio especial por haber completado el diagnóstico rápido
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* 6. Lead Magnet Block (Moved Down) */}
                                 <div className="print:hidden">
                                     <LeadMagnetBlock source="result_quick" />
                                 </div>
+
+                                {/* 7. FAQ Section */}
+                                <div className="print:break-inside-avoid">
+                                    <ResultFAQ />
+                                </div>
                             </>
-                        )}
-
-                        {/* FAQ Section (New) */}
-                        <div className="print:break-inside-avoid">
-                            <ResultFAQ />
-                        </div>
-
-                        {/* Feedback Form (New) */}
-                        <div className="print:hidden">
-                            <FeedbackForm
-                                ierScore={ierScore}
-                                productType={type === "deep" ? "deep" : "quick"}
-                                resultId={resultId}
-                            />
-                        </div>
-
-                        {/* Science Anchor */}
-                        <div className="flex items-center justify-center gap-3 text-sm text-muted-foreground opacity-70 print:opacity-100 py-8 border-t border-border/40">
-                            <BookOpen className="w-4 h-4" />
-                            <p>Diagnóstico basado en escalas validadas (RAS y QRS), adaptadas para orientación digital.</p>
-                        </div>
-
-                        {/* 5. UPSHELL BLOCK (Dynamic) */}
-                        {type !== "deep" && (
-                            <div className="bg-[#161811] text-[#f0efe9] rounded-3xl p-10 text-center space-y-6 print:hidden relative overflow-hidden">
-                                {/* Background Glow */}
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 hover:bg-primary/30 blur-[100px] transition-all duration-700 rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
-
-                                <h3 className="text-3xl font-bold font-display relative z-10">
-                                    ¿Quieres entender qué está afectando exactamente tu relación?
-                                </h3>
-
-                                <div className="py-4 relative z-10">
-                                    <div className="text-5xl font-bold text-primary mb-2">{ierScore}°</div>
-                                    <div className="text-white/60 text-sm uppercase tracking-widest">Tu Temperatura Actual</div>
-                                </div>
-
-                                <p className="text-white/70 max-w-xl mx-auto text-lg relative z-10">
-                                    La <strong>Evaluación Profunda</strong> identifica qué dimensión específica (Comunicación, Confianza, etc.) está debilitando la relación y te ofrece una hoja de ruta clara de recuperación.
-                                </p>
-
-                                <div className="pt-4 relative z-10">
-                                    <Link href={`/checkout?type=upgrade&${searchParams.toString()}`} className="inline-block">
-                                        <Button className="bg-[#a6f20d] hover:bg-[#95da0b] text-[#161811] font-bold h-16 px-10 text-xl rounded-full mx-auto shadow-xl shadow-[#a6f20d]/20 transition-transform active:scale-95 animate-pulse hover:animate-none">
-                                            Actualizar ahora por solo $17
-                                        </Button>
-                                    </Link>
-                                    <p className="mt-3 text-xs text-white/40 uppercase tracking-widest">
-                                        Precio especial por haber completado el diagnóstico rápido
-                                    </p>
-                                </div>
-                            </div>
                         )}
                     </div>
 

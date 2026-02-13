@@ -61,7 +61,7 @@ export function LeadMagnetBlock({
                         🎁 Guía descargada correctamente
                     </h3>
                     <p className="text-muted-foreground">
-                        Se ha abierto en una nueva pestaña. También te la enviamos por correo.
+                        Se ha abierto en una nueva pestaña. Te recomendamos descargarla o guardarla para revisarla cuando lo necesites.
                     </p>
                 </div>
 
