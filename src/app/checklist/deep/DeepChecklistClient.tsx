@@ -18,7 +18,7 @@ export default function DeepChecklistClient() {
     const searchParams = useSearchParams()
 
     // States
-    const [phase, setPhase] = useState<'intro' | 'demographics' | 'questions' | 'analyzing' | 'paywall'>('intro')
+    const [phase, setPhase] = useState<'intro' | 'demographics' | 'questions' | 'analyzing' | 'paywall' | 'success'>('intro')
     const [currentStep, setCurrentStep] = useState(0)
     const [answers, setAnswers] = useState<Record<string, number>>({})
     const [demographics, setDemographics] = useState({
@@ -114,7 +114,18 @@ export default function DeepChecklistClient() {
             if (current >= 100) {
                 current = 100
                 clearInterval(timer)
-                setTimeout(() => setPhase('paywall'), 800)
+
+                // CHECK FOR UPGRADE / ALREADY PAID STATUS
+                // If session_id exists, it means they came from the Upgrade Payment Flow
+                // So we skip the paywall and go straight to results
+                const sessionId = searchParams.get('session_id')
+
+                if (sessionId) {
+                    setPhase('success')
+                } else {
+                    // New User ($27) -> Show Paywall
+                    setTimeout(() => setPhase('paywall'), 800)
+                }
             }
             setAnalysisProgress(current)
 
@@ -126,6 +137,30 @@ export default function DeepChecklistClient() {
             setAnalysisStageIndex(stageIndex)
 
         }, intervalTime)
+    }
+
+    const handleViewResults = () => {
+        const params = new URLSearchParams()
+
+        // 1. Preserve params
+        searchParams.forEach((val, key) => params.set(key, val))
+
+        // 2. Add Answers
+        Object.entries(answers).forEach(([id, val]) => {
+            params.set(id, val.toString())
+        })
+
+        // 3. Add Demographics
+        params.set("age", demographics.ageRange)
+        params.set("status", demographics.maritalStatus)
+        params.set("duration", demographics.relationshipDuration)
+        params.set("cohabiting", demographics.isCohabiting)
+        params.set("children", demographics.hasChildren)
+
+        // 4. Force type to deep (so they see the full report)
+        params.set("type", "deep")
+
+        router.push(`/result?${params.toString()}`)
     }
 
     const handleUnlockClick = () => {
@@ -508,6 +543,48 @@ export default function DeepChecklistClient() {
                                             Pago único. Acceso inmediato.
                                         </p>
                                     </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* PHASE 6: SUCCESS (Upgrade Flow) */}
+                        {phase === 'success' && (
+                            <div className="flex flex-col items-center justify-center py-12 animate-in fade-in zoom-in-95 duration-700">
+                                <div className="max-w-2xl mx-auto text-center space-y-12">
+
+                                    <div className="space-y-6">
+                                        <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground leading-tight">
+                                            Gracias por tu confianza.
+                                        </h1>
+                                        <p className="text-xl text-muted-foreground leading-relaxed max-w-lg mx-auto">
+                                            Hemos analizado cuidadosamente tus respuestas. Tu informe está listo.
+                                        </p>
+                                    </div>
+
+                                    <div className="w-full max-w-md mx-auto space-y-4">
+                                        <Button
+                                            onClick={handleViewResults}
+                                            className="w-full h-16 text-lg font-bold rounded-xl shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all text-[#161811] bg-[#a6f20d] hover:bg-[#95da0b] flex items-center justify-center gap-2"
+                                        >
+                                            Ver Resultados del Diagnóstico
+                                            <ArrowRight className="w-5 h-5" />
+                                        </Button>
+                                        <p className="text-sm text-muted-foreground">
+                                            Acceso inmediato a tu informe personalizado
+                                        </p>
+                                    </div>
+
+                                    <div className="pt-12 space-y-6">
+                                        <p className="text-lg italic font-serif text-muted-foreground/80 max-w-lg mx-auto">
+                                            "Sanar no es un destino, sino el valiente camino de volver a intentarlo cada día con más amor."
+                                        </p>
+                                        <div className="inline-block border-t-2 border-primary/30 pt-2 px-8">
+                                            <span className="text-xs font-bold text-primary uppercase tracking-[0.2em]">
+                                                Equipo Intentémoslo
+                                            </span>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         )}
