@@ -74,6 +74,7 @@ export async function POST(req: Request) {
                 },
             ],
             mode: 'payment',
+            allow_promotion_codes: true,
             // Success URL: Flow Control
             // Upgrade -> Go to Checklist Deep (start/continue work)
             // Quick / Deep -> Go to Thank You (results ready)
