@@ -127,7 +127,7 @@ export function LeadMagnetBlock({
 
                 {/* Form */}
                 <div className="bg-white p-8 rounded-3xl shadow-lg shadow-brand-navy/5 border border-brand-navy/5 relative">
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-4 relative z-10">
+                    <div onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)} className="flex flex-col gap-4 relative z-10">
                         <div className="text-center md:text-left mb-2">
                             <p className="font-bold text-brand-navy text-sm">
                                 ¿A dónde te enviamos la guía?
@@ -147,7 +147,8 @@ export function LeadMagnetBlock({
                         </div>
 
                         <Button
-                            type="submit"
+                            type="button"
+                            onClick={handleSubmit}
                             disabled={isLoading || !email}
                             className="w-full bg-brand-navy hover:bg-brand-navy/90 text-white font-bold text-lg h-14 rounded-xl shadow-lg transition-transform active:scale-95"
                         >
@@ -171,7 +172,7 @@ export function LeadMagnetBlock({
                         <p className="text-[10px] text-center text-gray-400 mt-2">
                             Tu correo está seguro. Sin spam.
                         </p>
-                    </form>
+                    </div>
                 </div>
 
             </div>

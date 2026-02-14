@@ -82,7 +82,7 @@ export function SubscribeBlock({
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <div onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)} className="flex flex-col gap-3">
                     <div className="relative">
                         <input
                             type="email"
@@ -96,7 +96,8 @@ export function SubscribeBlock({
                     </div>
 
                     <Button
-                        type="submit"
+                        type="button"
+                        onClick={handleSubmit}
                         disabled={isLoading || !email}
                         className="w-full bg-brand-navy hover:bg-brand-navy/90 text-white font-bold text-lg h-12 rounded-xl"
                     >
@@ -117,7 +118,7 @@ export function SubscribeBlock({
                     <p className="text-xs text-center text-gray-400 mt-2">
                         Puedes darte de baja en cualquier momento.
                     </p>
-                </form>
+                </div>
 
             </div>
         </div>

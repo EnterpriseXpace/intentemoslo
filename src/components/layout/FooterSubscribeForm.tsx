@@ -49,8 +49,8 @@ export function FooterSubscribeForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-            <div className="flex gap-2">
+        <div className="flex flex-col gap-2">
+            <div className="flex gap-2" onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}>
                 <input
                     type="email"
                     placeholder="tu@email.com"
@@ -61,7 +61,8 @@ export function FooterSubscribeForm() {
                     className="w-full bg-white/5 border border-white/10 text-white placeholder:text-gray-500 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all disabled:opacity-50"
                 />
                 <Button
-                    type="submit"
+                    type="button"
+                    onClick={handleSubmit}
                     disabled={isLoading || !email}
                     className="bg-primary hover:bg-primary/90 text-brand-navy font-bold rounded-xl px-4"
                 >
@@ -80,6 +81,6 @@ export function FooterSubscribeForm() {
             <p className="text-[10px] text-gray-500 pl-1">
                 Puedes darte de baja cuando quieras.
             </p>
-        </form>
+        </div>
     )
 }
