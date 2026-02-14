@@ -11,6 +11,8 @@ import { DEEP_QUESTIONS, LIKERT_OPTIONS, DEEP_DIMENSIONS } from "@/data/question
 import { DEEP_MICROCOPY } from "@/data/microcopy"
 import { trackEvent } from "@/lib/instrumentation"
 
+import { ArrowRight, Loader2 } from "lucide-react"
+
 export default function DeepChecklistClient() {
     const router = useRouter()
     const searchParams = useSearchParams()
