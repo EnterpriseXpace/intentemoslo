@@ -74,10 +74,12 @@ export async function POST(req: Request) {
                 },
             ],
             mode: 'payment',
-            // Success URL: Unified flow
-            // Upgrade: Treated as 'deep' to ensure correct access check and preserving params.
-            success_url: productType === 'upgrade'
-                ? `${origin}/thank-you?session_id={CHECKOUT_SESSION_ID}&type=deep&${currentUrlParams || ''}`
+            // Success URL: Flow Control
+            // Deep/Upgrade -> Go to Checklist Deep (start/continue work)
+            // Quick -> Go to Thank You (results ready)
+            // CRITICAL: Always preserve currentUrlParams (R1, R2...) for upgrades
+            success_url: (productType === 'upgrade' || productType === 'deep')
+                ? `${origin}/checklist/deep?session_id={CHECKOUT_SESSION_ID}&${currentUrlParams || ''}`
                 : `${origin}/thank-you?session_id={CHECKOUT_SESSION_ID}&type=${productType}&${currentUrlParams || ''}`,
 
             cancel_url: `${origin}/checkout?type=${productType}`,

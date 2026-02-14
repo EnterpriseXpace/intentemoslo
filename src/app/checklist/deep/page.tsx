@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Header } from "@/components/layout/Header"
 import { Container } from "@/components/layout/Container"
 import { Button } from "@/components/ui/Button"
@@ -12,6 +12,7 @@ import { trackEvent } from "@/lib/instrumentation"
 
 export default function DeepChecklistPage() {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const [currentStep, setCurrentStep] = useState(0)
     const [answers, setAnswers] = useState<Record<string, number>>({})
     const [showIntro, setShowIntro] = useState(true)
@@ -76,11 +77,19 @@ export default function DeepChecklistPage() {
 
             // Save results to URL parameters for the result page to process
             const params = new URLSearchParams()
+
+            // 1. Preserve ALL existing params (including R scores from Quick)
+            searchParams.forEach((val, key) => {
+                params.set(key, val)
+            })
+
+            // 2. Add/Overwrite DEEP answers
             params.set("type", "deep")
             Object.entries(answers).forEach(([id, val]) => {
                 params.set(id, val.toString())
             })
-            router.push(`/processing?${params.toString()}`)
+
+            router.push(`/thank-you?${params.toString()}`)
         }
     }
 

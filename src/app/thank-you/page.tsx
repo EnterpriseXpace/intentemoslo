@@ -118,7 +118,7 @@ function ThankYouContent() {
     // For UPGRADE: Start Deep Checklist (No params needed, starts fresh)
     // For OTHERS: Go to Result (With Params preserved)
     const targetUrl = isUpgrade
-        ? '/checklist/deep'
+        ? `/checklist/deep?${params.toString()}`
         : `/result?${params.toString()}`
 
     const buttonText = isUpgrade
