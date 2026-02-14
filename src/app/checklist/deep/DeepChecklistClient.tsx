@@ -11,14 +11,14 @@ import { DEEP_QUESTIONS, LIKERT_OPTIONS, DEEP_DIMENSIONS } from "@/data/question
 import { DEEP_MICROCOPY } from "@/data/microcopy"
 import { trackEvent } from "@/lib/instrumentation"
 
-import { ArrowRight, Loader2 } from "lucide-react"
+import { ArrowRight, Loader2, Lock, CheckCircle2 } from "lucide-react"
 
 export default function DeepChecklistClient() {
     const router = useRouter()
     const searchParams = useSearchParams()
 
     // States
-    const [phase, setPhase] = useState<'intro' | 'demographics' | 'questions'>('intro')
+    const [phase, setPhase] = useState<'intro' | 'demographics' | 'questions' | 'analyzing' | 'paywall'>('intro')
     const [currentStep, setCurrentStep] = useState(0)
     const [answers, setAnswers] = useState<Record<string, number>>({})
     const [demographics, setDemographics] = useState({
@@ -32,6 +32,16 @@ export default function DeepChecklistClient() {
     const [showTransition, setShowTransition] = useState(false)
     const [isAdvancing, setIsAdvancing] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
+
+    // Analysis State
+    const [analysisProgress, setAnalysisProgress] = useState(0)
+    const [analysisStageIndex, setAnalysisStageIndex] = useState(0)
+
+    const ANALYSIS_STAGES = [
+        "Revisando consistencia...",
+        "Identificando patrones...",
+        "Generando estrategia 360°..."
+    ]
 
     const question = DEEP_QUESTIONS[currentStep]
     const progress = ((currentStep + 1) / DEEP_QUESTIONS.length) * 100
@@ -86,35 +96,63 @@ export default function DeepChecklistClient() {
             }
             setCurrentStep(currentStep + 1)
         } else {
-            setIsSubmitting(true)
-            trackEvent('checklist_completed', { productType: 'deep' })
-
-            // Save results to URL parameters
-            const params = new URLSearchParams()
-
-            // 1. Preserve ALL existing params
-            searchParams.forEach((val, key) => {
-                params.set(key, val)
-            })
-
-            // 2. Add DEEP answers
-            params.set("type", "deep")
-            Object.entries(answers).forEach(([id, val]) => {
-                params.set(id, val.toString())
-            })
-
-            // 3. Add Demographics as metadata (JSON stringified to avoid cluttering params too much, or individual fields)
-            // Storing as individual params for clarity if needed, or a single json object. 
-            // Requirements said "metadata or answers_json". We'll put them in params so Result page can pick them up if needed,
-            // but primarily they just need to pass through.
-            params.set("age", demographics.ageRange)
-            params.set("status", demographics.maritalStatus)
-            params.set("duration", demographics.relationshipDuration)
-            params.set("cohabiting", demographics.isCohabiting)
-            params.set("children", demographics.hasChildren)
-
-            router.push(`/result?${params.toString()}`)
+            // Questions Completed -> Start Analysis
+            setPhase('analyzing')
+            startAnalysis()
         }
+    }
+
+    const startAnalysis = () => {
+        const duration = 4000
+        const intervalTime = 50
+        const steps = duration / intervalTime
+        const increment = 100 / steps
+
+        let current = 0
+        const timer = setInterval(() => {
+            current += increment
+            if (current >= 100) {
+                current = 100
+                clearInterval(timer)
+                setTimeout(() => setPhase('paywall'), 800)
+            }
+            setAnalysisProgress(current)
+
+            // Update stage text based on progress
+            const stageIndex = Math.min(
+                ANALYSIS_STAGES.length - 1,
+                Math.floor((current / 100) * ANALYSIS_STAGES.length)
+            )
+            setAnalysisStageIndex(stageIndex)
+
+        }, intervalTime)
+    }
+
+    const handleUnlockClick = () => {
+        // Prepare URL Params for persistence
+        const params = new URLSearchParams()
+
+        // 1. Preserve existing params
+        searchParams.forEach((val, key) => {
+            params.set(key, val)
+        })
+
+        // 2. Add DEEP answers
+        Object.entries(answers).forEach(([id, val]) => {
+            params.set(id, val.toString())
+        })
+
+        // 3. Add Demographics
+        params.set("age", demographics.ageRange)
+        params.set("status", demographics.maritalStatus)
+        params.set("duration", demographics.relationshipDuration)
+        params.set("cohabiting", demographics.isCohabiting)
+        params.set("children", demographics.hasChildren)
+
+        // 4. Ensure Type is Deep
+        params.set("type", "deep")
+
+        router.push(`/checkout?${params.toString()}`)
     }
 
     const handleBack = () => {
@@ -382,6 +420,96 @@ export default function DeepChecklistClient() {
                                     )}
                                 </div>
                             )
+                        )}
+
+                        {/* PHASE 4: ANALYZING (Circular Style) */}
+                        {phase === 'analyzing' && (
+                            <div className="flex flex-col items-center justify-center py-12 animate-in fade-in duration-700">
+                                <div className="max-w-md mx-auto text-center space-y-10">
+                                    <div className="space-y-4">
+                                        <h2 className="text-2xl font-bold font-display text-foreground min-h-[3rem] items-center flex justify-center">
+                                            {ANALYSIS_STAGES[analysisStageIndex]}
+                                        </h2>
+                                        <p className="text-muted-foreground animate-pulse">
+                                            Por favor no cierres esta página.
+                                        </p>
+                                    </div>
+
+                                    <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
+                                        <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+                                        <div
+                                            className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"
+                                            style={{ animationDuration: "1.5s" }}
+                                        ></div>
+                                        <Loader2 className="w-8 h-8 text-primary/60" />
+                                    </div>
+
+                                    <div className="space-y-2 max-w-xs mx-auto">
+                                        <div className="flex justify-between text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                            <span>Progreso</span>
+                                            <span>{Math.round(analysisProgress)}%</span>
+                                        </div>
+                                        <ProgressBar value={analysisProgress} className="h-2" />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* PHASE 5: PAYWALL (Lock Card Style) */}
+                        {phase === 'paywall' && (
+                            <div className="flex flex-col items-center justify-center py-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                <div className="max-w-lg text-center space-y-10">
+
+                                    {/* Header */}
+                                    <div className="space-y-4">
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider mx-auto">
+                                            <CheckCircle2 className="w-3.5 h-3.5" />
+                                            Análisis Completado
+                                        </div>
+                                        <h1 className="text-3xl md:text-4xl font-bold font-display text-foreground">
+                                            Tu lectura está lista
+                                        </h1>
+                                        <p className="text-lg text-muted-foreground leading-relaxed">
+                                            Hemos cruzado las 5 dimensiones. Tu evaluación profunda está completa y lista para lectura.
+                                        </p>
+                                    </div>
+
+                                    {/* Lock Card */}
+                                    <div className="relative w-full aspect-square max-w-[320px] mx-auto bg-white rounded-3xl shadow-xl border border-border/50 overflow-hidden group">
+                                        <div className="absolute inset-0 bg-white/60 backdrop-blur-md z-10 flex flex-col items-center justify-center p-6 text-center space-y-4 transition-all duration-500 group-hover:backdrop-blur-sm">
+                                            <div className="p-4 bg-white rounded-full shadow-sm">
+                                                <Lock className="w-8 h-8 text-muted-foreground/50" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="font-bold text-foreground">Resultado Bloqueado</p>
+                                                <p className="text-sm text-muted-foreground px-4">
+                                                    El informe contiene datos sensibles sobre tu situación actual.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Abstract Background */}
+                                        <div className="w-full h-full p-8 opacity-20 filter blur-sm scale-110">
+                                            <div className="w-full h-full rounded-full border-[20px] border-primary/40 flex items-center justify-center">
+                                                <div className="w-2/3 h-2/3 bg-secondary/80 rounded-full"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Main Action */}
+                                    <div className="w-full max-w-xs mx-auto">
+                                        <Button
+                                            onClick={handleUnlockClick}
+                                            className="w-full h-14 text-lg font-bold rounded-xl shadow-xl shadow-primary/20 hover:scale-105 transition-all text-[#161811] bg-[#a6f20d] hover:bg-[#95da0b]"
+                                        >
+                                            Ver análisis completo (US$ 27)
+                                        </Button>
+                                        <p className="text-xs text-center text-muted-foreground mt-4">
+                                            Pago único. Acceso inmediato.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         )}
                     </div>
                 </Container>
