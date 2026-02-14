@@ -36,7 +36,7 @@ import { ResultFAQ } from "@/components/results/ResultFAQ"
 import { SubscribeBlock } from "@/components/SubscribeBlock"
 import { LeadMagnetBlock } from "@/components/LeadMagnetBlock"
 
-type AccessStatus = 'checking' | 'authorized' | 'denied'
+type AccessStatus = 'checking' | 'authorized' | 'locked' | 'denied'
 
 export default function ResultClient() {
     const searchParams = useSearchParams()
@@ -121,6 +121,18 @@ export default function ResultClient() {
     // 2. CHECK ACCESS (The Critical Logic)
     useEffect(() => {
         const checkAccess = async () => {
+            // Timeout Check
+            const timeoutId = setTimeout(() => {
+                console.warn("[RESULT] Verification timeout. Defaulting based on type.")
+                if (isDeep) {
+                    // Deep Paywall Logic
+                    setStatus('locked')
+                } else {
+                    // For Quick, if timeout, show locked
+                    setStatus('locked')
+                }
+            }, 5000)
+
             try {
                 // Priority: 1. URL Param (from Stripe) 2. SessionStorage
                 const urlEmail = searchParams.get("email")
@@ -131,43 +143,56 @@ export default function ResultClient() {
                     sessionStorage.setItem("customer_email", urlEmail)
                 }
 
-                // CASE A: Quick Report (Open Access)
-                if (!isDeep) {
-                    setStatus('authorized')
-                    trackView('any')
-                    return
-                }
-
-                // CASE B: Deep Report (Restricted)
                 if (!emailToCheck) {
-                    // No email to verify? Denied.
-                    console.log("[RESULT] Deep requested but no email found.")
-                    setStatus('denied')
+                    console.log("[RESULT] No email found.")
+                    clearTimeout(timeoutId)
+                    // Always show lock if no email (Pre-payment flow)
+                    setStatus('locked')
                     return
                 }
 
-                // CASE C: Verify Deep Access via API
-                console.log("[RESULT] Verifying Deep access for:", emailToCheck)
+                // Verify Access via API
+                console.log("[RESULT] Verifying access for:", emailToCheck)
                 const res = await fetch(`/api/access/check?email=${encodeURIComponent(emailToCheck)}`)
-                const data = await res.json()
-                const accessLevel = data.access // 'deep' | 'none'
 
-                if (accessLevel === 'deep') {
-                    setStatus('authorized')
-                    trackView('deep')
+                if (!res.ok) throw new Error("API Error")
+                const data = await res.json()
+                const accessLevel = data.access // 'deep' | 'quick' | 'none'
+
+                console.log("[RESULT] API Access Level:", accessLevel)
+
+                clearTimeout(timeoutId)
+
+                if (isDeep) {
+                    if (accessLevel === 'deep') {
+                        setStatus('authorized')
+                        trackView('deep')
+                    } else {
+                        // Not authorized for Deep -> Show Deep Paywall
+                        console.warn("[RESULT] Deep Access Denied -> Locked")
+                        setStatus('locked')
+                    }
                 } else {
-                    console.warn("[RESULT] Access Denied by API")
-                    setStatus('denied')
+                    // Quick Flow
+                    if (accessLevel === 'quick' || accessLevel === 'deep') {
+                        setStatus('authorized')
+                        trackView('quick')
+                    } else {
+                        // Not paid yet -> Show Locked (Quick Paywall)
+                        setStatus('locked')
+                    }
                 }
 
             } catch (e) {
                 console.error("[RESULT] Auth check error", e)
-                setStatus('denied') // Fail safe
+                clearTimeout(timeoutId)
+                // Fail safe: Locked
+                setStatus('locked')
             }
         }
 
         checkAccess()
-    }, [isDeep, searchParams])
+    }, [isDeep, searchParams, router])
 
     // Helper for tracking
     const trackView = (accessLevel: string) => {
@@ -236,29 +261,148 @@ export default function ResultClient() {
         )
     }
 
-    if (status === 'denied') {
-        const checkoutUrl = `/checkout?type=deep&${searchParams.toString()}`
+    if (status === 'locked') {
+        const payType = isDeep ? 'deep' : 'quick'
+        const price = isDeep ? '$27' : '$5'
+
+        // Deep Flow: Blurred Report + Capture Form
+        if (isDeep) {
+            return (
+                <div className="min-h-screen bg-background relative overflow-hidden">
+                    {/* BLURRED BACKGROUND CONTENT */}
+                    <div className="filter blur-xl opacity-40 pointer-events-none select-none h-screen overflow-hidden">
+                        <Header />
+                        <main className="py-12">
+                            <Container>
+                                <div className="text-center space-y-6 mb-12">
+                                    <h1 className="text-4xl font-bold text-foreground">Análisis de Estructura Relacional</h1>
+                                </div>
+                                <div className="max-w-4xl mx-auto space-y-12">
+                                    <div className="grid md:grid-cols-12 gap-8 items-start mb-12">
+                                        <div className="md:col-span-4 bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col items-center justify-center text-center space-y-4 h-full">
+                                            <h3 className="text-lg font-bold text-slate-900">Índice de Estabilidad</h3>
+                                            <ResultMetric value={ierScore} label="" size="lg" />
+                                        </div>
+                                        <div className="md:col-span-8 h-full">
+                                            <DeepSummary summary={humanSummary} />
+                                        </div>
+                                    </div>
+                                    <DeepDimensions dimensions={deepDimensions} />
+                                </div>
+                            </Container>
+                        </main>
+                    </div>
+
+                    {/* OVERLAY CARD */}
+                    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-background/50 backdrop-blur-[2px]">
+                        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-10 max-w-md w-full border-2 border-primary/20 animate-in fade-in zoom-in-95 duration-500">
+                            <div className="text-center space-y-6">
+                                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-4xl">
+                                    🔒
+                                </div>
+
+                                <div className="space-y-2">
+                                    <h2 className="text-2xl font-bold text-foreground font-display">
+                                        Tu Análisis está listo
+                                    </h2>
+                                    <p className="text-muted-foreground text-sm">
+                                        Hemos completado el estudio de las 5 dimensiones de tu relación.
+                                    </p>
+                                </div>
+
+                                {/* CAPTURE FORM */}
+                                <form
+                                    className="space-y-4 text-left"
+                                    onSubmit={(e) => {
+                                        e.preventDefault()
+                                        const formData = new FormData(e.currentTarget)
+                                        const name = formData.get('name') as string
+                                        const email = formData.get('email') as string
+
+                                        if (name && email) {
+                                            // 1. Save to session
+                                            sessionStorage.setItem('customer_name', name)
+                                            sessionStorage.setItem('customer_email', email)
+
+                                            // 2. Add to params
+                                            const newParams = new URLSearchParams(searchParams.toString())
+                                            newParams.set('name', name)
+                                            newParams.set('email', email)
+
+                                            // 3. Redirect
+                                            window.location.href = `/checkout?type=deep&${newParams.toString()}`
+                                        }
+                                    }}
+                                >
+                                    {!userName && (
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-foreground uppercase tracking-wider">Tu Nombre</label>
+                                            <input
+                                                name="name"
+                                                type="text"
+                                                required
+                                                placeholder="Ej. María"
+                                                className="w-full h-12 rounded-lg border-input bg-background px-4 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                            />
+                                        </div>
+                                    )}
+
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-foreground uppercase tracking-wider">Tu Correo Electrónico</label>
+                                        <input
+                                            name="email"
+                                            type="email"
+                                            required
+                                            defaultValue={sessionStorage.getItem('customer_email') || ''}
+                                            placeholder="ejemplo@correo.com"
+                                            className="w-full h-12 rounded-lg border-input bg-background px-4 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                        />
+                                    </div>
+
+                                    <Button type="submit" className="w-full h-14 text-lg font-bold bg-[#a6f20d] text-[#161811] hover:bg-[#95da0b] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all mt-4">
+                                        Desbloquear Reporte ($27)
+                                    </Button>
+
+                                    <p className="text-[10px] text-center text-muted-foreground pt-2">
+                                        Pago único de $27 USD. Acceso inmediato. Garantía de satisfacción 30 días.
+                                    </p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+
+        const checkoutUrl = `/checkout?type=quick&${searchParams.toString()}`
+
         return (
             <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
                 <Container className="max-w-md space-y-6">
                     <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mx-auto">
                         <Lock className="w-8 h-8 text-stone-400" />
                     </div>
-                    <h1 className="text-2xl font-bold text-foreground">Acceso Restringido</h1>
+                    <h1 className="text-2xl font-bold text-foreground">Reporte Listo</h1>
                     <p className="text-muted-foreground">
-                        Para ver el Análisis Profundo 360°, es necesario completar el proceso de actualización.
+                        Tus respuestas han sido procesadas. Desbloquea tu Diagnóstico de Estabilidad (IER) por solo $5.
                     </p>
                     <div className="pt-4">
                         <Link href={checkoutUrl}>
-                            <Button className="w-full h-12 text-lg font-bold bg-[#a6f20d] text-[#161811] hover:bg-[#95da0b]">
-                                Desbloquear Reporte ($17)
+                            <Button className="w-full h-12 text-lg font-bold bg-[#a6f20d] text-[#161811] hover:bg-[#95da0b] animate-pulse">
+                                Ver mi Reporte ({price})
                             </Button>
                         </Link>
                     </div>
+                    <p className="text-xs text-muted-foreground mt-4">
+                        Acceso inmediato • Pago seguro
+                    </p>
                 </Container>
             </div>
         )
     }
+
+    // Status 'denied' (Deep) redirects, but if it renders:
+    if (status === 'denied') return null
 
     // --- AUTHORIZED CONTENT (Existing UI) ---
     return (
@@ -288,19 +432,44 @@ export default function ResultClient() {
 
                         {type === "deep" ? (
                             // === DEEP REPORT COMPONENTS ===
+                            // === DEEP REPORT COMPONENTS ===
                             <>
+                                {/* Hero Section: Score & Summary */}
+                                <div className="grid md:grid-cols-12 gap-8 items-start mb-12 print:break-inside-avoid">
+                                    {/* Score Card */}
+                                    <div className="md:col-span-4 bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col items-center justify-center text-center space-y-4 h-full">
+                                        <h3 className="text-lg font-bold text-slate-900 font-display">Índice de Estabilidad</h3>
+                                        <ResultMetric value={ierScore} label="" size="lg" />
+                                        <p className="text-sm text-slate-500 leading-relaxed max-w-[200px]">
+                                            Este puntaje refleja la solidez estructural actual de la relación.
+                                        </p>
+                                    </div>
+
+                                    {/* Executive Summary */}
+                                    <div className="md:col-span-8 h-full">
+                                        <DeepSummary summary={humanSummary} />
+                                    </div>
+                                </div>
+
                                 <div className="print:break-inside-avoid">
                                     <DeepDimensions dimensions={deepDimensions} />
                                 </div>
-                                <div className="print:break-inside-avoid">
-                                    <DeepRisk risk={temporalRisk} />
+
+                                <div className="grid md:grid-cols-2 gap-8 print:break-inside-avoid">
+                                    <div className="space-y-8">
+                                        <DeepPattern pattern={dominantPattern} />
+                                    </div>
+                                    <div className="space-y-8">
+                                        <DeepRisk risk={temporalRisk} />
+                                    </div>
                                 </div>
-                                <div className="print:break-inside-avoid space-y-8">
-                                    <DeepSummary summary={humanSummary} />
-                                    <DeepPattern pattern={dominantPattern} />
-                                </div>
-                                <div className="print:break-inside-avoid">
+
+                                <div className="print:break-inside-avoid pt-8">
                                     <DeepRecommendations recommendations={deepRecommendations} />
+                                </div>
+
+                                <div className="print:break-inside-avoid pt-12">
+                                    <SubscribeBlock />
                                 </div>
                             </>
                         ) : (

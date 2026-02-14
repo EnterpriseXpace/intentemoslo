@@ -46,6 +46,9 @@ function ThankYouContent() {
                     if (data.customerName) {
                         sessionStorage.setItem("customer_name", data.customerName)
                     }
+                    if (data.customerEmail) {
+                        sessionStorage.setItem("customer_email", data.customerEmail)
+                    }
 
                     // Redirect to result
                     // Construct params
@@ -110,6 +113,12 @@ function ThankYouContent() {
 
     // Construct result URL preserving all params (answers)
     const params = new URLSearchParams(searchParams.toString())
+    // Ensure email is passed if we just verified it, so ResultClient can use it immediately without relying solely on sessionStorage
+    // (SessionStorage is flaky for cross-tab or sometimes embedded views)
+    const storedEmail = typeof window !== 'undefined' ? sessionStorage.getItem("customer_email") : null
+    if (storedEmail && !params.has("email")) {
+        params.set("email", storedEmail)
+    }
     // Optional: Remove session_id if not needed in result, but keeping it doesn't hurt.
     // We definitely need R1, R2, D1, D2 etc.
     // Logic for Button & Redirect

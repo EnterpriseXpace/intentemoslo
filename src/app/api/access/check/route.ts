@@ -21,29 +21,38 @@ export async function GET(req: Request) {
     }
 
     try {
-        // Strict query: Email + Deep + Paid/Completed
+        // Query ALL paid/completed purchases for this email
         const { data: purchases, error } = await supabaseAdmin
             .from('purchases')
             .select('product_type, status')
             .eq('customer_email', email)
-            .eq('product_type', 'deep')
             .in('status', ['paid', 'completed'])
-            .limit(1)
 
         if (error) {
             console.error('Access Check DB Error:', error)
             return NextResponse.json({ access: 'none' }, { status: 500 })
         }
 
-        console.log("[ACCESS CHECK] Resultado query:", purchases)
+        console.log("[ACCESS CHECK] Compras encontradas:", purchases?.length)
 
+        if (!purchases || purchases.length === 0) {
+            return NextResponse.json({ access: 'none' })
+        }
 
-        if (purchases && purchases.length > 0) {
+        // Determine highest access level
+        const hasDeep = purchases.some(p => p.product_type === 'deep' || p.product_type === 'upgrade')
+        const hasQuick = purchases.some(p => p.product_type === 'quick')
+
+        if (hasDeep) {
             console.log('Access GRANTED: deep')
             return NextResponse.json({ access: 'deep' })
         }
 
-        console.log('Access DENIED: No matching strict record found.')
+        if (hasQuick) {
+            console.log('Access GRANTED: quick')
+            return NextResponse.json({ access: 'quick' })
+        }
+
         return NextResponse.json({ access: 'none' })
 
     } catch (error) {

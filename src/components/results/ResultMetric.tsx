@@ -7,9 +7,10 @@ import { getDiagnosticState } from "@/lib/diagnostic-state"
 interface ResultMetricProps {
     value: number // 0-100
     label: string
+    size?: 'sm' | 'md' | 'lg'
 }
 
-export function ResultMetric({ value, label }: ResultMetricProps) {
+export function ResultMetric({ value, label, size = 'md' }: ResultMetricProps) {
     const [animatedValue, setAnimatedValue] = useState(0)
     const state = getDiagnosticState(value)
 
@@ -21,66 +22,77 @@ export function ResultMetric({ value, label }: ResultMetricProps) {
         return () => clearTimeout(timer)
     }, [value])
 
-    // Circumference for SVG
-    const radius = 80
+    // Size Logic
+    const sizeMap = {
+        sm: { size: 120, radius: 50, stroke: 8, text: 'text-2xl' },
+        md: { size: 192, radius: 80, stroke: 12, text: 'text-4xl' },
+        lg: { size: 240, radius: 100, stroke: 16, text: 'text-5xl' },
+    }
+    const { size: svgSize, radius, stroke, text: textSize } = sizeMap[size]
+
     const circumference = 2 * Math.PI * radius
     const offset = circumference - (animatedValue / 100) * circumference
 
     // VISUAL SHIELDING: Strict Color Mapping
-    // Never rely on default colors. Never allow black.
     const colorMap: Record<string, string> = {
         emerald: "text-emerald-500",
         amber: "text-amber-500",
         orange: "text-orange-500",
         red: "text-rose-500",
     }
-
-    const activeColor = colorMap[state.semanticColor] || "text-transparent" // Fail safe
+    const colorClass = colorMap[state.semanticColor] || "text-slate-900"
 
     if (!state) return null
 
     return (
         <div className="flex flex-col items-center justify-center relative">
-            <div className="relative w-48 h-48 flex items-center justify-center">
+            <div
+                className="relative flex items-center justify-center"
+                style={{ width: svgSize, height: svgSize }}
+            >
                 {/* Background Circle */}
                 <svg className="w-full h-full transform -rotate-90">
                     <circle
-                        cx="96"
-                        cy="96"
+                        cx="50%"
+                        cy="50%"
                         r={radius}
                         stroke="currentColor"
-                        strokeWidth="12"
+                        strokeWidth={stroke}
                         fill="transparent"
-                        className="text-stone-100" // Explicit neutral, never black
+                        className="text-slate-100"
                     />
                     {/* Progress Circle */}
                     <circle
-                        cx="96"
-                        cy="96"
+                        cx="50%"
+                        cy="50%"
                         r={radius}
                         stroke="currentColor"
-                        strokeWidth="12"
+                        strokeWidth={stroke}
                         fill="transparent"
                         strokeDasharray={circumference}
                         strokeDashoffset={offset}
                         strokeLinecap="round"
-                        className={cn("transition-all duration-1000 ease-out", activeColor)}
+                        className={cn("transition-all duration-1000 ease-out", colorClass)}
                     />
                 </svg>
 
                 {/* Center Text */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className={cn("text-4xl font-bold font-display tracking-tight", activeColor)}>
+                    <span className={cn("font-bold font-display tracking-tight leading-none", textSize, colorClass)}>
                         {Math.round(animatedValue)}
                     </span>
-                    <span className="text-xs uppercase font-bold text-muted-foreground mt-1">
-                        Puntos
-                    </span>
+                    {size !== 'sm' && (
+                        <span className="text-xs uppercase font-bold text-slate-400 mt-1">
+                            Puntos
+                        </span>
+                    )}
                 </div>
             </div>
-            <p className="mt-4 text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                {state.label}
-            </p>
+            {label && (
+                <p className="mt-4 text-sm font-medium text-slate-500 uppercase tracking-wider">
+                    {label}
+                </p>
+            )}
         </div>
     )
 }

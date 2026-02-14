@@ -28,7 +28,8 @@ export async function GET(req: Request) {
             return NextResponse.json({
                 verified: true,
                 productType: purchase.product_type,
-                customerName: purchase.metadata?.customerName
+                customerName: purchase.metadata?.customerName,
+                customerEmail: purchase.customer_email // Return email
             })
         }
 
@@ -43,10 +44,11 @@ export async function GET(req: Request) {
         const metadata = session.metadata || {}
         const productType = metadata.productType || 'quick'
         const finalProductType = productType === 'upgrade' ? 'deep' : productType
+        const customerEmail = session.customer_details?.email
 
         const { error: insertError } = await supabaseAdmin.from('purchases').insert({
             session_id: session.id,
-            customer_email: session.customer_details?.email,
+            customer_email: customerEmail,
             product_type: finalProductType,
             amount: session.amount_total ? session.amount_total / 100 : 0,
             status: 'completed',
@@ -62,7 +64,8 @@ export async function GET(req: Request) {
         return NextResponse.json({
             verified: true,
             productType: finalProductType,
-            customerName: metadata.customerName
+            customerName: metadata.customerName,
+            customerEmail: customerEmail // Return email
         })
 
     } catch (error) {
