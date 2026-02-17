@@ -112,7 +112,7 @@ export default function ChecklistPage() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500 key={currentStep}"> {/* Re-render animation on step change using key */}
+                            <div key={question.id} className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500"> {/* Re-render animation on step change using key */}
 
                                 {/* Header Section: Progress & Counter */}
                                 <div className="space-y-4">
