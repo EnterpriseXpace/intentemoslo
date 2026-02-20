@@ -1,4 +1,6 @@
 import { Header } from "@/components/layout/Header";
+import Image from "next/image";
+
 
 import Link from "next/link";
 
@@ -59,12 +61,18 @@ export default function Home() {
 
                             {/* Right Column: Image */}
                             <div className="relative h-[400px] md:h-[600px] w-full rounded-3xl overflow-hidden bg-secondary/20">
-                                <img
+                                <Image
                                     src="/header-image.jpg"
                                     alt="Momento de calma e introspección"
-                                    className="absolute inset-0 w-full h-full object-cover object-center opacity-90 hover:opacity-100 transition-opacity duration-700"
+                                    fill
+                                    priority
+                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                    className="object-cover object-center opacity-90 hover:opacity-100 transition-opacity duration-700"
+                                    placeholder="blur"
+                                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAIABADASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABQQG/8QAIxAAAQMEAgMBAAAAAAAAAAAAAQIDBAAFEiExQVH/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AqWnQ9VuV5d2oWL+XJCVqU4w62oLCgcFKScEGrOlaTrVy0OJuUiYmW0y2VNltCkLQkDOFJO4n3xVc5aRHuLCvVCWipHiD2Hkcef/Z"
                                 />
                             </div>
+
                         </div>
                     </Container>
                 </section>
