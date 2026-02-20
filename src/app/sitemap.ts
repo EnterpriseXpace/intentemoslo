@@ -1,5 +1,7 @@
 import { MetadataRoute } from "next"
 import { herramientasPublicadas } from "@/data/herramientas"
+import { articulosPublicados } from "@/data/blog"
+
 
 const BASE_URL =
     (process.env.NEXT_PUBLIC_APP_URL || "https://www.intentemoslodenuevo.com").replace(/\/$/, "")
@@ -75,5 +77,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.8,
     }))
 
-    return [...staticRoutes, ...legalRoutes, ...toolRoutes]
+    // ── 4. Artículos de blog publicados (auto-generado desde blog.ts) ─────────────
+    const blogRoutes: MetadataRoute.Sitemap = articulosPublicados.map((a) => ({
+        url: `${BASE_URL}/blog/${a.slug}`,
+        lastModified: new Date(a.publishedAt),
+        changeFrequency: "monthly" as const,
+        priority: 0.75,
+    }))
+
+    return [...staticRoutes, ...legalRoutes, ...toolRoutes, ...blogRoutes]
 }

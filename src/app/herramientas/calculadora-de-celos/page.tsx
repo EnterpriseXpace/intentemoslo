@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Container } from "@/components/layout/Container"
 import { Header } from "@/components/layout/Header"
 import { ToolBreadcrumbs } from "@/components/tools/ToolBreadcrumbs"
+import { RelatedTools } from "@/components/tools/RelatedTools"
 import CalculadoraClient from "./CalculadoraClient"
 
 const TOOL_SLUG = "calculadora-de-celos"
@@ -122,6 +123,25 @@ export default function CalculadoraDeCelosPage() {
                                 decisiones más conscientes en tu relación.
                             </p>
                         </article>
+
+                        {/* Interlinking: herramientas relacionadas del mismo cluster */}
+                        <RelatedTools slug={TOOL_SLUG} title="También sobre celos" />
+
+                        {/* CTA hacia diagnóstico principal */}
+                        <div className="bg-primary/5 border border-primary/15 rounded-2xl p-6 text-center space-y-3">
+                            <p className="text-sm font-semibold text-foreground">
+                                ¿Quieres una visión más completa de tu relación?
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                                El diagnóstico relacional evalúa múltiples dimensiones, no solo los celos.
+                            </p>
+                            <a
+                                href="/checklist"
+                                className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-primary-foreground font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors shadow-sm"
+                            >
+                                Comenzar diagnóstico completo →
+                            </a>
+                        </div>
                     </div>
                 </Container>
             </main>
