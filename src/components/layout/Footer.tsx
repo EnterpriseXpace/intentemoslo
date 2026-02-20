@@ -7,6 +7,7 @@ import { Container } from "@/components/layout/Container";
 import { Logo } from "@/components/ui/Logo";
 import { Instagram, Youtube, Music } from "lucide-react";
 import { FooterSubscribeForm } from "@/components/layout/FooterSubscribeForm";
+import { herramientasPublicadas } from "@/data/herramientas";
 
 export function Footer() {
     const pathname = usePathname();
@@ -62,7 +63,7 @@ export function Footer() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8">
                     {/* Column 1: Brand */}
                     <div className="flex flex-col gap-2">
                         <Link href="/" className="flex items-center gap-2 -mt-9">
@@ -98,7 +99,26 @@ export function Footer() {
                         </nav>
                     </div>
 
-                    {/* Column 3: Connect */}
+                    {/* Column 3: Herramientas gratuitas — generado dinámicamente */}
+                    <div className="flex flex-col gap-4">
+                        <h3 className="font-semibold text-white">Herramientas gratuitas</h3>
+                        <nav className="flex flex-col gap-3 text-sm text-gray-400">
+                            <Link href="/herramientas" className="hover:text-primary transition-colors font-medium text-gray-300">
+                                Ver todas →
+                            </Link>
+                            {herramientasPublicadas.map((h) => (
+                                <Link
+                                    key={h.slug}
+                                    href={`/herramientas/${h.slug}`}
+                                    className="hover:text-primary transition-colors"
+                                >
+                                    {h.title}
+                                </Link>
+                            ))}
+                        </nav>
+                    </div>
+
+                    {/* Column 4: Connect */}
                     <div className="flex flex-col gap-4">
                         <h3 className="font-semibold text-white">Conectar</h3>
                         <nav className="flex flex-col gap-3 text-sm text-gray-400">
@@ -132,7 +152,7 @@ export function Footer() {
                         </nav>
                     </div>
 
-                    {/* Column 4: Legal & Support */}
+                    {/* Column 5: Legal & Support */}
                     <div className="flex flex-col gap-4">
                         <h3 className="font-semibold text-white">Legal</h3>
                         <nav className="flex flex-col gap-3 text-sm text-gray-400">
@@ -158,6 +178,7 @@ export function Footer() {
                         </nav>
                     </div>
                 </div>
+
             </Container>
         </footer>
     );
