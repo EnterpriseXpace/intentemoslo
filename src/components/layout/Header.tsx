@@ -12,7 +12,9 @@ const NAV_LINKS = [
     { href: "/#productos", label: "Qué incluye" },
     { href: "/#para-quien", label: "Para quién es" },
     { href: "/herramientas", label: "Herramientas" },
+    { href: "/blog", label: "Blog" },
 ]
+
 
 export function Header() {
     const [scrolled, setScrolled] = useState(false)
